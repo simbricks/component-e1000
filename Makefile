@@ -20,6 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Compilers and python interpreter (overridable by conda / the environment).
+CXX               ?= c++
+PYTHON            ?= python
+
 # Python packages (each has its own pyproject.toml).
 E1000_PY_SIM       := e1000_sim_bm_py
 E1000_PY_SYS       := e1000_sys_py
@@ -44,7 +48,13 @@ e1000-python-develop:
 
 ## --- Conda packages --------------------------------------------------------
 
-conda-packages:
+e1000-sys-py-conda:
+	$(BASE_BUILD_CMD) conda-recipes/simbricks-e1000-sys-py
+
+e1000-sim-bm-py-conda: e1000-sys-py-conda
+	$(BASE_BUILD_CMD) conda-recipes/simbricks-e1000-sim-bm-py
+
+conda-packages: e1000-sys-py-conda e1000-sim-bm-py-conda
 
 ## --- PyPI packages ---------------------------------------------------------
 
