@@ -1,1 +1,6 @@
 __pycache__/
+
+# e1000_gem5 behavioral-model build artifacts
+*.o
+*.d
+/e1000_gem5/e1000_gem5

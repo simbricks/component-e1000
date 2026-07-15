@@ -24,6 +24,15 @@
 CXX               ?= c++
 PYTHON            ?= python
 
+# Where "make e1000-install" places the binary. Inside a conda build this is the
+# host/build prefix; for a local dev build override it, e.g. PREFIX=$(pwd)/out.
+PREFIX            ?= $(CURDIR)/out
+# simbricks-lib install layout: the headers and the static libs the behavioral
+# model links against. Default under PREFIX; override for local dev to
+# wherever simbricks-lib is installed.
+SIMBRICKS_INC_DIR ?= $(PREFIX)/include
+SIMBRICKS_LIB_DIR ?= $(PREFIX)/lib/simbricks
+
 # Python packages (each has its own pyproject.toml).
 E1000_PY_SIM       := e1000_sim_bm_py
 E1000_PY_SYS       := e1000_sys_py
@@ -37,7 +46,25 @@ OUTPUT_FLAG       := $(if $(OUTPUT_FOLDER),--output-folder $(OUTPUT_FOLDER))
 SIMB_CONDA_CHANNEL:= -c https://conda.simbricks.io/latest
 BASE_BUILD_CMD    := conda build $(SIMB_CONDA_CHANNEL) -m conda-recipes/conda_build_config.yaml $(OUTPUT_FLAG)
 
-.PHONY: all conda-packages pypi-build pypi-publish clean
+.PHONY: all \
+        e1000-build e1000-install \
+        e1000-python-develop \
+        e1000-sys-py-conda e1000-sim-bm-py-conda e1000-sim-bm-bin-conda \
+        conda-packages pypi-build pypi-publish clean
+
+## --- e1000_gem5 behavioral model (C++ sources in e1000_gem5/) --------------
+
+# Standalone dev build: just the binary, no conda package. The compile rules
+# live in e1000_gem5/Makefile (a self-contained makefile); we only drive them.
+e1000-build:
+	$(MAKE) -C e1000_gem5 all CXX="$(CXX)" \
+	    SIMBRICKS_INC_DIR="$(SIMBRICKS_INC_DIR)" \
+	    SIMBRICKS_LIB_DIR="$(SIMBRICKS_LIB_DIR)"
+
+# Install the binary into $(PREFIX)/sims/nic/e1000_gem5/e1000_gem5 (builds first
+# via the dependency; the install step itself only needs PREFIX).
+e1000-install: e1000-build
+	$(MAKE) -C e1000_gem5 install-e1000 PREFIX="$(PREFIX)"
 
 ## --- Python packages -------------------------------------------------------
 
@@ -54,7 +81,11 @@ e1000-sys-py-conda:
 e1000-sim-bm-py-conda: e1000-sys-py-conda
 	$(BASE_BUILD_CMD) conda-recipes/simbricks-e1000-sim-bm-py
 
-conda-packages: e1000-sys-py-conda e1000-sim-bm-py-conda
+e1000-sim-bm-bin-conda:
+	$(BASE_BUILD_CMD) conda-recipes/simbricks-e1000-sim-bm-bin
+
+# Build all conda packages (python hulls first, then the compiled binary).
+conda-packages: e1000-sys-py-conda e1000-sim-bm-py-conda e1000-sim-bm-bin-conda
 
 ## --- PyPI packages ---------------------------------------------------------
 
@@ -74,4 +105,5 @@ all: conda-packages
 ## --- Housekeeping ----------------------------------------------------------
 
 clean:
+	-$(MAKE) -C e1000_gem5 clean
 	rm -rf $(E1000_PY_SIM)/dist $(E1000_PY_SYS)/dist
