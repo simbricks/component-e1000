@@ -20,6 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Python packages (each has its own pyproject.toml).
+E1000_PY_SIM       := e1000_sim_bm_py
+E1000_PY_SYS       := e1000_sys_py
+
 # Optional: redirect conda-build output, e.g. OUTPUT_FOLDER=./conda-out.
 OUTPUT_FOLDER     ?=
 OUTPUT_FLAG       := $(if $(OUTPUT_FOLDER),--output-folder $(OUTPUT_FOLDER))
@@ -31,6 +35,13 @@ BASE_BUILD_CMD    := conda build $(SIMB_CONDA_CHANNEL) -m conda-recipes/conda_bu
 
 .PHONY: all conda-packages pypi-build pypi-publish clean
 
+## --- Python packages -------------------------------------------------------
+
+# Editable installs for local development.
+e1000-python-develop:
+	$(PYTHON) -m pip install -e ./$(E1000_PY_SIM)
+	$(PYTHON) -m pip install -e ./$(E1000_PY_SYS)
+
 ## --- Conda packages --------------------------------------------------------
 
 conda-packages:
@@ -38,8 +49,12 @@ conda-packages:
 ## --- PyPI packages ---------------------------------------------------------
 
 pypi-build:
+	poetry build -C $(E1000_PY_SIM)
+	poetry build -C $(E1000_PY_SYS)
 
 pypi-publish: pypi-build
+	poetry publish -C $(E1000_PY_SIM)
+	poetry publish -C $(E1000_PY_SYS)
 
 ## --- Default target ----------------------------------------------------------
 
@@ -49,3 +64,4 @@ all: conda-packages
 ## --- Housekeeping ----------------------------------------------------------
 
 clean:
+	rm -rf $(E1000_PY_SIM)/dist $(E1000_PY_SYS)/dist
