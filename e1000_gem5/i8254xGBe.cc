@@ -33,7 +33,7 @@
  * other MACs with slight modifications.
  */
 
-#include "sims/nic/e1000_gem5/i8254xGBe.h"
+#include "i8254xGBe.h"
 
 /*
  * @todo really there are multiple dma engines.. we should implement them.

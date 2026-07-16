@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sims/nic/e1000_gem5/gem5/pktfifo.h"
+#include "gem5/pktfifo.h"
 
 
 using namespace std;

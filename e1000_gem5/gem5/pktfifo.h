@@ -33,7 +33,7 @@
 #include <list>
 #include <string>
 
-#include "sims/nic/e1000_gem5/support.h"
+#include "support.h"
 
 struct EthPacket;
 

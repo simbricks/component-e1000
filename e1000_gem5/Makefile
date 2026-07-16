@@ -36,19 +36,8 @@ E1000_DEPS        ?= $(SIMBRICKS_LIB_DIR)/libnicbm.a $(SIMBRICKS_LIB_DIR)/libnic
                      $(SIMBRICKS_LIB_DIR)/libbase.a
 E1000_LDLIBS      ?= -lboost_fiber -lboost_context -lpthread
 
-# The sources refer to themselves and to simbricks-lib headers with legacy
-# tree-relative quote includes, e.g. e1000_gem5.cc does
-# `#include "sims/nic/e1000_gem5/i8254xGBe.h"` and installed simbricks-lib
-# headers do `#include "lib/simbricks/..."`. We satisfy both with one shim
-# directory on the quote-include path (-iquote): a `lib` symlink pointing at the
-# simbricks-lib install ("lib/simbricks/X" -> $(SIMBRICKS_INC_DIR)/simbricks/X)
-# and a `sims/nic/e1000_gem5` symlink pointing back here
-# ("sims/nic/e1000_gem5/X" -> this directory, incl. the gem5/ subdir). Our own
-# angle includes (<simbricks/...>) resolve via -I$(SIMBRICKS_INC_DIR).
-SB_SHIM := .sb-shim
-
 DEPFLAGS   = -MMD -MP
-CPPFLAGS  += -I$(SIMBRICKS_INC_DIR) -iquote$(SB_SHIM) $(EXTRA_CPPFLAGS)
+CPPFLAGS  += -I$(SIMBRICKS_INC_DIR) -iquote$(CURDIR) $(EXTRA_CPPFLAGS)
 CXXFLAGS  += -Wall -Wextra -Wno-unused-parameter -O3 -fPIC -std=gnu++17 $(EXTRA_CXXFLAGS)
 
 SRCS := e1000_gem5.cc i8254xGBe.cc gem5/bitfield.cc gem5/inet.cc gem5/pktfifo.cc
@@ -61,18 +50,6 @@ all: $(BIN)
 $(BIN): $(OBJS) $(E1000_DEPS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(E1000_DEPS) $(E1000_LDLIBS)
 
-$(SB_SHIM)/lib:
-	mkdir -p $(SB_SHIM)
-	ln -sfn $(SIMBRICKS_INC_DIR) $@
-
-$(SB_SHIM)/sims/nic/e1000_gem5:
-	mkdir -p $(SB_SHIM)/sims/nic
-	ln -sfn $(CURDIR) $@
-
-# Order-only: the shim symlinks must exist before compiling, but changes to them
-# should not force a rebuild.
-$(OBJS): | $(SB_SHIM)/lib $(SB_SHIM)/sims/nic/e1000_gem5
-
 %.o: %.cc
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
@@ -84,6 +61,5 @@ install-e1000:
 .PHONY: clean
 clean:
 	rm -f $(OBJS) $(OBJS:.o=.d) $(BIN)
-	rm -rf $(SB_SHIM)
 
 -include $(OBJS:.o=.d)

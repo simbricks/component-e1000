@@ -2,7 +2,7 @@
 #include <stdarg.h>
 
 #include <simbricks/nicbm/nicbm.h>
-#include "sims/nic/e1000_gem5/i8254xGBe.h"
+#include "i8254xGBe.h"
 
 static nicbm::Runner *runner;
 static bool debug_enable = false;

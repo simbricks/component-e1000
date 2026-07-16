@@ -44,8 +44,8 @@
 #include <sstream>
 #include <string>
 
-#include "sims/nic/e1000_gem5/support.h"
-#include "sims/nic/e1000_gem5/gem5/inet.h"
+#include "support.h"
+#include "gem5/inet.h"
 
 using namespace std;
 

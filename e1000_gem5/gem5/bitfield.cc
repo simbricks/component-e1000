@@ -35,7 +35,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sims/nic/e1000_gem5/gem5/bitfield.h"
+#include "gem5/bitfield.h"
 
 /** Lookup table used for High Speed bit reversing */
 const uint8_t reverseLookUpTable[] =

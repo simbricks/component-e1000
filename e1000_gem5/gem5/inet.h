@@ -47,12 +47,12 @@
 #include <utility>
 #include <vector>
 
-#include "sims/nic/e1000_gem5/support.h"
-#include "sims/nic/e1000_gem5/gem5/eth.h"
-#include "sims/nic/e1000_gem5/gem5/ip.h"
-#include "sims/nic/e1000_gem5/gem5/ip6.h"
-#include "sims/nic/e1000_gem5/gem5/tcp.h"
-#include "sims/nic/e1000_gem5/gem5/udp.h"
+#include "support.h"
+#include "gem5/eth.h"
+#include "gem5/ip.h"
+#include "gem5/ip6.h"
+#include "gem5/tcp.h"
+#include "gem5/udp.h"
 
 /*
  * Ethernet Stuff

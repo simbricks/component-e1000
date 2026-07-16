@@ -36,10 +36,10 @@
 #include <deque>
 #include <string>
 
-#include "sims/nic/e1000_gem5/support.h"
-#include "sims/nic/e1000_gem5/gem5/pktfifo.h"
-#include "sims/nic/e1000_gem5/gem5/inet.h"
-#include "sims/nic/e1000_gem5/i8254xGBe_defs.h"
+#include "support.h"
+#include "gem5/pktfifo.h"
+#include "gem5/inet.h"
+#include "i8254xGBe_defs.h"
 
 struct IGbEParams {
     int rx_fifo_size;
