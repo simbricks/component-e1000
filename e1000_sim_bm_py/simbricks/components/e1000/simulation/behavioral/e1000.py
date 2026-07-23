@@ -36,7 +36,7 @@ class E1000NIC(pcidev.NICSim):
     def __init__(self, simulation: sim_base.Simulation):
         super().__init__(
             simulation=simulation,
-            executable="sims/nic/e1000_gem5/e1000_gem5",
+            executable="simb_e1000_gem5",
         )
         self.name = f"NICSim-{self._id}"
         self.debug: bool = False
