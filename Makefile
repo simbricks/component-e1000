@@ -31,7 +31,7 @@ PREFIX            ?= $(CURDIR)/out
 # model links against. Default under PREFIX; override for local dev to
 # wherever simbricks-lib is installed.
 SIMBRICKS_INC_DIR ?= $(PREFIX)/include
-SIMBRICKS_LIB_DIR ?= $(PREFIX)/lib/simbricks
+SIMBRICKS_LIB_DIR ?= $(PREFIX)/lib
 
 # Python packages (each has its own pyproject.toml).
 E1000_PY_SIM       := e1000_sim_bm_py
